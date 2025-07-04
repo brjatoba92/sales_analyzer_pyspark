@@ -2,6 +2,7 @@ from src.etl.load_data import criar_spark_session, carregar_dados_vendas, carreg
 from src.etl.transform import preparar_dataset_completo
 from src.analysis.vendas_por_loja import calcular_agregados_por_loja, gerar_ranking_lojas
 from src.analysis.filter import filtrar_por_periodo, filtrar_por_categoria, filtrar_por_subcategoria, filtra_por_regiao
+from src.etl.export import exportar_para_csv
 
 spark = criar_spark_session()
 # ETL: Carregar os dados
@@ -43,3 +44,6 @@ df_ranking_filtrado = gerar_ranking_lojas(df_agregado_filtrado)
 
 # Exibir os dados filtrados e o ranking
 df_ranking_filtrado.show(10, truncate=False)
+
+# Raking final após filtro e agregação
+exportar_para_csv(df_ranking_filtrado)
