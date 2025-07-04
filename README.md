@@ -1,7 +1,32 @@
 # Sales Analyzer with PySpark
 
-## Architecture:
+## Objective
+Create basic aggregated sales reports by store.
 
+## Features
+- Load sales data from multiple stores
+- Simple aggregations: total sales, item count, average ticket size
+- Store ranking by revenue
+- Filters by date range and product category
+
+## Required Datasets
+1. `sales.parquet`:  
+   Columns: `date`, `store_id`, `product_id`, `quantity`, `unit_price`
+
+2. `stores.parquet`:  
+   Columns: `store_id`, `store_name`, `city`, `state`, `region`
+
+3. `products.parquet`:  
+   Columns: `product_id`, `product_name`, `category`, `subcategory`
+
+## Key PySpark Concepts
+- Basic DataFrame API
+- Aggregations with `groupBy()` and `agg()`
+- Simple joins
+- Date functions and sorting
+
+## Architecture:
+```
 analise_vendas_pyspark/
 ├── README.md
 ├── requirements.txt
@@ -33,3 +58,4 @@ analise_vendas_pyspark/
 └── reports/
     ├── tabelas/
     └── graficos/
+```
