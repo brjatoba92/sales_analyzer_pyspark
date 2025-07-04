@@ -1,3 +1,7 @@
+# Sales Analyzer with PySpark
+
+## Architecture:
+
 analise_vendas_pyspark/
 ├── README.md
 ├── requirements.txt
