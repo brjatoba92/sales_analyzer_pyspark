@@ -1,55 +1,50 @@
 import pandas as pd
 import numpy as np
+from src.config import paths
 import sys
 from pathlib import Path
-
-# Permitir importar o módulo src
-ROOT_DIR = Path(__file__).resolve().parent.parent
-sys.path.append(str(ROOT_DIR))
-
-# Importa o caminho centralizado
-from src.config.paths import RAW_DATA_DIR
+sys.path.append(str(Path(__file__).resolve().parents[1]))
 
 
-def gerar_vendas():
-    np.random.seed(42)
-    datas = pd.date_range(start="2024-01-01", periods=100, freq="D")
-    vendas = pd.DataFrame({
-        "data": np.random.choice(datas, size=200),
-        "loja_id": np.random.choice([1, 2, 3], size=200),
-        "produto_id": np.random.choice([101, 102, 103, 104], size=200),
-        "quantidade": np.random.randint(1, 10, size=200),
-        "valor_unitario": np.random.uniform(10, 100, size=200).round(2)
+# 1. Criar produtos
+produtos = [
+    {"produto_id": 1, "nome_produto": "Cimento", "categoria": "Construção", "subcategoria": "Argamassa"},
+    {"produto_id": 2, "nome_produto": "Tijolo", "categoria": "Construção", "subcategoria": "Alvenaria"},
+    {"produto_id": 3, "nome_produto": "Tinta", "categoria": "Acabamento", "subcategoria": "Pintura"},
+    {"produto_id": 4, "nome_produto": "Parafuso", "categoria": "Ferramentas", "subcategoria": "Fixação"},
+    {"produto_id": 5, "nome_produto": "Porta", "categoria": "Madeira", "subcategoria": "Portas e Janelas"},
+]
+df_produtos = pd.DataFrame(produtos)
+
+# 2. Criar lojas
+lojas = [
+    {"loja_id": 1, "nome_loja": "Loja Centro", "cidade": "Maceió", "estado": "AL", "regiao": "Nordeste"},
+    {"loja_id": 2, "nome_loja": "Loja Industrial", "cidade": "Aracaju", "estado": "SE", "regiao": "Nordeste"},
+    {"loja_id": 3, "nome_loja": "Loja Capital", "cidade": "Recife", "estado": "PE", "regiao": "Nordeste"},
+]
+df_lojas = pd.DataFrame(lojas)
+
+# 3. Criar vendas mock
+np.random.seed(42)
+datas = pd.date_range(start="2024-01-01", end="2024-03-31", freq="D")
+vendas = []
+for _ in range(1000):
+    vendas.append({
+        "data": np.random.choice(datas),
+        "loja_id": np.random.choice([1, 2, 3]),
+        "produto_id": np.random.choice([1, 2, 3, 4, 5]),
+        "quantidade": np.random.randint(1, 20),
+        "valor_unitario": round(np.random.uniform(5.0, 100.0), 2)
     })
-    vendas.to_parquet(RAW_DATA_DIR / "vendas.parquet", index=False)
-    print("✔ vendas.parquet gerado.")
+df_vendas = pd.DataFrame(vendas)
 
+# ✅ Correção para o tipo de dado compatível com PySpark
+df_vendas["data"] = df_vendas["data"].astype("datetime64[ms]")
 
-def gerar_lojas():
-    lojas = pd.DataFrame({
-        "loja_id": [1, 2, 3],
-        "nome_loja": ["Loja Norte", "Loja Sul", "Loja Centro"],
-        "cidade": ["Maceió", "Arapiraca", "Palmeira dos Índios"],
-        "estado": ["AL", "AL", "AL"],
-        "regiao": ["Nordeste", "Nordeste", "Nordeste"]
-    })
-    lojas.to_parquet(RAW_DATA_DIR / "lojas.parquet", index=False)
-    print("✔ lojas.parquet gerado.")
+# 4. Salvar Parquet
+paths.DATA_RAW_DIR.mkdir(parents=True, exist_ok=True)
+df_vendas.to_parquet(paths.DATA_RAW_DIR / "vendas.parquet", index=False)
+df_lojas.to_parquet(paths.DATA_RAW_DIR / "lojas.parquet", index=False)
+df_produtos.to_parquet(paths.DATA_RAW_DIR / "produtos.parquet", index=False)
 
-
-def gerar_produtos():
-    produtos = pd.DataFrame({
-        "produto_id": [101, 102, 103, 104],
-        "nome_produto": ["Cimento", "Areia", "Tijolo", "Prego"],
-        "categoria": ["Construção", "Construção", "Construção", "Ferragens"],
-        "subcategoria": ["Cimento", "Areia", "Alvenaria", "Pregos"]
-    })
-    produtos.to_parquet(RAW_DATA_DIR / "produtos.parquet", index=False)
-    print("✔ produtos.parquet gerado.")
-
-
-if __name__ == "__main__":
-    gerar_vendas()
-    gerar_lojas()
-    gerar_produtos()
-    print("\n✅ Todos os arquivos .parquet foram gerados com sucesso!")
+print("✅ Dados mock salvos com sucesso!")
