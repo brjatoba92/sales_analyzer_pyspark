@@ -3,6 +3,7 @@ from src.etl.transform import preparar_dataset_completo
 from src.analysis.vendas_por_loja import calcular_agregados_por_loja, gerar_ranking_lojas
 from src.analysis.filter import filtrar_por_periodo, filtrar_por_categoria, filtrar_por_subcategoria, filtra_por_regiao
 from src.etl.export import exportar_para_csv
+from src.visualization.graficos_vendas import plot_ranking_lojas
 
 
 def main():
@@ -34,6 +35,8 @@ def main():
     # 7. Exportar resultado
     exportar_para_csv(df_ranking, "ranking_lojas_filtrado.csv")
 
+    #8. Plotar grafico
+    plot_ranking_lojas()
 
 if __name__ == "__main__":
     main()
